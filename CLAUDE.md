@@ -12,35 +12,37 @@ Este arquivo fornece orientações ao Claude Code (claude.ai/code) ao trabalhar 
 Unitax/
 └── database/
     ├── tables/          # Criação e alteração de tabelas (DDL)
-    ├── views/           # Views
-    ├── procedures/      # Stored procedures
-    ├── functions/       # Functions
+    ├── views/           # Visões
+    ├── procedures/      # Procedimentos armazenados
+    ├── functions/       # Funções
     ├── packages/
-    │   ├── specs/       # Package specifications
-    │   └── bodies/      # Package bodies
-    ├── triggers/        # Triggers
-    ├── sequences/       # Sequences
-    ├── indexes/         # Indexes
-    ├── types/           # Types e object types
-    ├── synonyms/        # Synonyms
-    ├── jobs/            # DBMS_SCHEDULER jobs
+    │   ├── specs/       # Especificações de pacotes
+    │   └── bodies/      # Corpo dos pacotes
+    ├── triggers/        # Gatilhos
+    ├── sequences/       # Sequências
+    ├── indexes/         # Índices
+    ├── types/           # Tipos e tipos de objeto
+    ├── synonyms/        # Sinônimos
+    ├── jobs/            # Agendamentos via DBMS_SCHEDULER
     ├── scripts/
-    │   ├── ddl/         # Scripts de criação/alteração de estrutura
+    │   ├── ddl/         # Scripts de criação e alteração de estrutura
     │   └── dml/         # Scripts de carga e manipulação de dados
-    └── apex/            # Exports de aplicações Oracle APEX
+    └── apex/            # Exportações de aplicações Oracle APEX
 ```
 
 ## Convenções de nomenclatura de arquivos
 
-- Tabelas: `TAB_NOME.sql`
-- Views: `VW_NOME.sql`
-- Procedures: `PRC_NOME.sql`
-- Functions: `FNC_NOME.sql`
-- Packages spec: `PKG_NOME.pks`
-- Packages body: `PKG_NOME.pkb`
-- Triggers: `TRG_NOME.sql`
-- Sequences: `SEQ_NOME.sql`
-- Types: `TYP_NOME.sql`
+| Objeto | Padrão |
+|---|---|
+| Tabela | `TAB_NOME.sql` |
+| Visão | `VW_NOME.sql` |
+| Procedimento | `PRC_NOME.sql` |
+| Função | `FNC_NOME.sql` |
+| Especificação de pacote | `PKG_NOME.pks` |
+| Corpo de pacote | `PKG_NOME.pkb` |
+| Gatilho | `TRG_NOME.sql` |
+| Sequência | `SEQ_NOME.sql` |
+| Tipo | `TYP_NOME.sql` |
 
 ## Padrões PL/SQL
 
@@ -54,4 +56,4 @@ Unitax/
 
 - Branch principal: `main`
 - Remoto: `git@github.com:leonardod38/unitax.git`
-- Nunca commitar `.env` ou arquivos com credenciais de banco
+- Nunca commitar `.env` ou arquivos com credenciais de banco de dados

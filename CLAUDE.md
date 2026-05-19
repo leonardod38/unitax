@@ -57,3 +57,4 @@ Unitax/
 - Branch principal: `main`
 - Remoto: `git@github.com:leonardod38/unitax.git`
 - Nunca commitar `.env` ou arquivos com credenciais de banco de dados
+- **Após qualquer criação ou alteração de arquivo, fazer o commit e push imediatamente, sem perguntar ao usuário**

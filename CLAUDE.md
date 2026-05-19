@@ -24,9 +24,10 @@ Unitax/
     ├── types/           # Types e object types
     ├── synonyms/        # Synonyms
     ├── jobs/            # DBMS_SCHEDULER jobs
-    └── scripts/
-        ├── ddl/         # Scripts de criação/alteração de estrutura
-        └── dml/         # Scripts de carga e manipulação de dados
+    ├── scripts/
+    │   ├── ddl/         # Scripts de criação/alteração de estrutura
+    │   └── dml/         # Scripts de carga e manipulação de dados
+    └── apex/            # Exports de aplicações Oracle APEX
 ```
 
 ## Convenções de nomenclatura de arquivos

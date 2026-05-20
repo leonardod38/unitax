@@ -1,8 +1,22 @@
+# Credenciais e configurações locais
 .env
+
+# Python
 *.pyc
+*.pyo
 __pycache__/
 *.egg-info/
 dist/
 build/
 .venv/
 venv/
+
+# Logs de execução
+log/
+*/log/
+
+# Arquivos temporários e backups de desenvolvimento
+*.old
+*.bkp*
+modulo/
+transito/

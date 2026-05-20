@@ -17,11 +17,9 @@ DIR_IGNORADOS     = os.environ.get("DIR_IGNORADOS",     "/zip/ignorado")
 DIR_DESCONHECIDOS = os.environ.get("DIR_DESCONHECIDOS", "/zip/desconhecido")
 DIR_LANDING       = os.environ.get("DIR_LANDING",       "/zip")
 DIR_BACKUP        = os.environ.get("DIR_BACKUP",        "/backup")
-DIR_STAGING        = "/xmls/staging_temp"
-ARQUIVO_LOG        = os.path.join(os.path.dirname(__file__), "log", "auditoria_nfe.log")
-ARQUIVO_DEBUG      = os.path.join(os.path.dirname(__file__), "log", "debug_sistemico.log")
-
-PASTAS_PRESERVADAS = {'cancelada', 'corrompidos', 'desconhecido', 'duplicadas', 'ignorado'}
+DIR_STAGING       = "/xmls/staging_temp"
+ARQUIVO_LOG       = os.path.join(os.path.dirname(__file__), "log", "auditoria_nfe.log")
+ARQUIVO_DEBUG     = os.path.join(os.path.dirname(__file__), "log", "debug_sistemico.log")
 
 
 def comando_existe(cmd):
@@ -304,30 +302,6 @@ def processar_xmls_soltos(arquivos_ordenados):
         gravar_log("INFO", "XML_SOLTOS", "DIRETORIO_ZIP", "{} XMLs soltos movidos para palco".format(qtd_soltos))
 
 
-def limpar_origem_apos_extracao():
-    if not os.path.exists(DIR_LANDING):
-        return
-    removidos = 0
-    for item in os.listdir(DIR_LANDING):
-        caminho_item = os.path.join(DIR_LANDING, item)
-        if os.path.isdir(caminho_item) and item.lower() in PASTAS_PRESERVADAS:
-            continue
-        try:
-            if os.path.isfile(caminho_item) or os.path.islink(caminho_item):
-                try:
-                    os.chmod(caminho_item, 0o777)
-                except Exception:
-                    pass
-                os.unlink(caminho_item)
-            elif os.path.isdir(caminho_item):
-                shutil.rmtree(caminho_item, ignore_errors=True)
-            removidos += 1
-            debug_log("LIMPAR_ORIGEM", "Removido: {}".format(item))
-        except Exception as e:
-            debug_log("LIMPAR_ORIGEM", "Erro ao remover {}: {}".format(item, e))
-    gravar_log("INFO", "LIMPAR_ORIGEM", "DIR_LANDING", "{} itens removidos do diretorio de origem.".format(removidos))
-
-
 def executar():
     if os.path.exists(ARQUIVO_DEBUG):
         open(ARQUIVO_DEBUG, 'w').close()
@@ -363,7 +337,6 @@ def executar():
 
     if not pacotes:
         debug_log("EXEC", "Nenhum pacote para processar.")
-        limpar_origem_apos_extracao()
         return
 
     for pacote in pacotes:
@@ -402,8 +375,6 @@ def executar():
         finally:
             if os.path.exists(DIR_STAGING):
                 shutil.rmtree(DIR_STAGING, ignore_errors=True)
-
-    limpar_origem_apos_extracao()
 
 
 if __name__ == "__main__":

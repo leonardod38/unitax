@@ -1,0 +1,282 @@
+-- Tipo   : TABLE + TRIGGER
+-- Objeto : TB_UNIFICADA_RF / TRG_BIU_UNIFICADA_CFOP
+-- Schema : USER_XMLS
+-- Salvo  : 2026-06-03
+-- Origem : Export do banco (Row Count: 941)
+-- Nota   : Tabela unificada RF — consolida TB_REFORMA_CONSOLIDADA + TB_REFORMA_TRIBUTARIA.
+--          PK: (CHAVE_ACESSO, NITEM, TIPO_DOCUMENTO).
+--          Trigger preenche I08_CFOP_DESC buscando descrição em MSAF_DW.X2012_COD_FISCAL.
+-- ------------------------------------------------------------
+
+DROP TABLE TB_UNIFICADA_RF CASCADE CONSTRAINTS
+/
+
+CREATE TABLE TB_UNIFICADA_RF
+(
+  TIPO_DOCUMENTO         VARCHAR2(255 BYTE),
+  CHAVE_ACESSO           VARCHAR2(256 BYTE),
+  NUMERO_NF              VARCHAR2(20 BYTE),
+  DATA_EMISSAO           VARCHAR2(30 BYTE),
+  NITEM                  NUMBER,
+  -- Emitente
+  C02_CNPJ               VARCHAR2(256 BYTE),
+  C02A_CPF               VARCHAR2(256 BYTE),
+  C03_XNOME              VARCHAR2(256 BYTE),
+  C04_XFANT              VARCHAR2(256 BYTE),
+  C05_XLGR               VARCHAR2(256 BYTE),
+  C05_NRO                VARCHAR2(256 BYTE),
+  C05_XCPL               VARCHAR2(256 BYTE),
+  C05_XBAIRRO            VARCHAR2(256 BYTE),
+  C05_CMUN               VARCHAR2(256 BYTE),
+  C05_XMUN               VARCHAR2(256 BYTE),
+  C05_UF                 VARCHAR2(256 BYTE),
+  C05_CEP                VARCHAR2(256 BYTE),
+  C05_CPAIS              VARCHAR2(256 BYTE),
+  C05_XPAIS              VARCHAR2(256 BYTE),
+  C05_FONE               VARCHAR2(256 BYTE),
+  C17_IE                 VARCHAR2(256 BYTE),
+  C18_IEST               VARCHAR2(256 BYTE),
+  C19_IM                 VARCHAR2(256 BYTE),
+  C20_CNAE               VARCHAR2(256 BYTE),
+  C21_CRT                VARCHAR2(256 BYTE),
+  -- Destinatário
+  E02_CNPJ               VARCHAR2(256 BYTE),
+  E03_CPF                VARCHAR2(256 BYTE),
+  E03A_IDESTRANGEIRO     VARCHAR2(256 BYTE),
+  E04_XNOME              VARCHAR2(256 BYTE),
+  E05_XLGR               VARCHAR2(256 BYTE),
+  E05_NRO                VARCHAR2(256 BYTE),
+  E05_XCPL               VARCHAR2(256 BYTE),
+  E05_XBAIRRO            VARCHAR2(256 BYTE),
+  E05_CMUN               VARCHAR2(256 BYTE),
+  E05_XMUN               VARCHAR2(256 BYTE),
+  E05_UF                 VARCHAR2(256 BYTE),
+  E05_CEP                VARCHAR2(256 BYTE),
+  E05_CPAIS              VARCHAR2(256 BYTE),
+  E05_XPAIS              VARCHAR2(256 BYTE),
+  E05_FONE               VARCHAR2(256 BYTE),
+  E16_INDIEDEST          VARCHAR2(256 BYTE),
+  E17_IE                 VARCHAR2(256 BYTE),
+  E18_ISUF               VARCHAR2(256 BYTE),
+  E19_IM                 VARCHAR2(256 BYTE),
+  E20_EMAIL              VARCHAR2(256 BYTE),
+  -- Item / Produto
+  I02_CPROD              VARCHAR2(256 BYTE),
+  I03_CEAN               VARCHAR2(256 BYTE),
+  I04_XPROD              VARCHAR2(256 BYTE),
+  I05_NCM                VARCHAR2(256 BYTE),
+  I08_CFOP               VARCHAR2(256 BYTE),
+  I09_UCOM               VARCHAR2(256 BYTE),
+  I10_QCOM               NUMBER,
+  I10A_VUNCOM            NUMBER,
+  I11_VPROD              NUMBER,
+  I12_CEANTRIB           VARCHAR2(256 BYTE),
+  I13_UTRIB              VARCHAR2(256 BYTE),
+  I14_QTRIB              NUMBER,
+  I14A_VUNTRIB           NUMBER,
+  I15_VDESC              NUMBER,
+  I17B_INDTOT            VARCHAR2(256 BYTE),
+  -- ICMS
+  ICMS_ORIG              VARCHAR2(256 BYTE),
+  ICMS_CST               VARCHAR2(256 BYTE),
+  ICMS_CSOSN             VARCHAR2(256 BYTE),
+  ICMS_VBC               NUMBER,
+  ICMS_PICMS             NUMBER,
+  ICMS_VICMS             NUMBER,
+  ICMS_VBCST             NUMBER,
+  ICMS_PICMSST           NUMBER,
+  ICMS_VICMSST           NUMBER,
+  -- IPI
+  IPI_CENQ               VARCHAR2(256 BYTE),
+  IPI_CNPJPROD           VARCHAR2(256 BYTE),
+  IPI_CST                VARCHAR2(256 BYTE),
+  IPI_VBC                NUMBER,
+  IPI_PIPI               NUMBER,
+  IPI_QUNID              NUMBER,
+  IPI_VUNID              NUMBER,
+  IPI_VIPI               NUMBER,
+  -- PIS
+  PIS_CST                VARCHAR2(256 BYTE),
+  PIS_VBC                NUMBER,
+  PIS_PPIS               NUMBER,
+  PIS_QBCPROD            NUMBER,
+  PIS_VALIQPROD          NUMBER,
+  PIS_VPIS               NUMBER,
+  PISST_VBC              NUMBER,
+  PISST_PPIS             NUMBER,
+  PISST_QBCPROD          NUMBER,
+  PISST_VALIQPROD        NUMBER,
+  PISST_VPIS             NUMBER,
+  -- COFINS
+  COFINS_CST             VARCHAR2(256 BYTE),
+  COFINS_VBC             NUMBER,
+  COFINS_PCOFINS         NUMBER,
+  COFINS_QBCPROD         NUMBER,
+  COFINS_VALIQPROD       NUMBER,
+  COFINS_VCOFINS         NUMBER,
+  COFINSST_VBC           NUMBER,
+  COFINSST_PCOFINS       NUMBER,
+  COFINSST_QBCPROD       NUMBER,
+  COFINSST_VALIQPROD     NUMBER,
+  COFINSST_VCOFINS       NUMBER,
+  -- IS — Imposto Seletivo
+  IS_CST                 VARCHAR2(256 BYTE),
+  IS_CCLASS_TRIB         VARCHAR2(256 BYTE),
+  IS_VBC                 NUMBER,
+  IS_PIS                 NUMBER,
+  IS_PIS_ESPEC           NUMBER,
+  IS_UTRIB               VARCHAR2(256 BYTE),
+  IS_QTRIB               NUMBER,
+  IS_VIS                 NUMBER,
+  -- IBS / CBS
+  IBSCBS_CST             VARCHAR2(256 BYTE),
+  IBSCBS_CCLASS_TRIB     VARCHAR2(256 BYTE),
+  IBS_VBC                NUMBER,
+  IBS_VIBS               NUMBER,
+  IBS_PIBSUF             NUMBER,
+  IBS_VIBSUF             NUMBER,
+  DEV_VTRIB              NUMBER,
+  RED_PREDALIQ           NUMBER,
+  RED_PALIQEFET          NUMBER,
+  IBS_PIBSMUN            NUMBER,
+  IBS_VIBSMUN            NUMBER,
+  CBS_VBC                NUMBER,
+  CBS_PCBS               NUMBER,
+  CBS_VCBS               NUMBER,
+  -- Regime Tributário diferenciado
+  TRIB_REG_CST           VARCHAR2(256 BYTE),
+  TRIB_REG_CCLASS_TRIB   VARCHAR2(256 BYTE),
+  TRIB_REG_PALIQ_IBSUF   NUMBER,
+  TRIB_REG_VTRIB_IBSUF   NUMBER,
+  TRIB_REG_PALIQ_IBSMUN  NUMBER,
+  TRIB_REG_VTRIB_IBSMUN  NUMBER,
+  TRIB_REG_PALIQ_CBS     NUMBER,
+  TRIB_REG_VTRIB_CBS     NUMBER,
+  -- Compartilhamento Governamental
+  COMP_GOV_PALIQ_IBSUF   NUMBER,
+  COMP_GOV_VTRIB_IBSUF   NUMBER,
+  COMP_GOV_PALIQ_IBSMUN  NUMBER,
+  COMP_GOV_VTRIB_IBSMUN  NUMBER,
+  COMP_GOV_PALIQ_CBS     NUMBER,
+  COMP_GOV_VTRIB_CBS     NUMBER,
+  -- Monofásico
+  MONO_QBCMONO           NUMBER,
+  MONO_ADREMIBS          NUMBER,
+  MONO_ADREMCBS          NUMBER,
+  MONO_VIBSMONO          NUMBER,
+  MONO_VCBSMONO          NUMBER,
+  MONO_RET_VBC           NUMBER,
+  MONO_RET_QBCMONO       NUMBER,
+  MONO_RET_ADREMIBS      NUMBER,
+  MONO_RET_ADREMCBS      NUMBER,
+  MONO_RET_VIBS          NUMBER,
+  MONO_RET_VCBS          NUMBER,
+  MONO_ANT_VBC           NUMBER,
+  MONO_ANT_QBCMONO       NUMBER,
+  MONO_ANT_ADREMIBS      NUMBER,
+  MONO_ANT_ADREMCBS      NUMBER,
+  MONO_ANT_VIBS          NUMBER,
+  MONO_ANT_VCBS          NUMBER,
+  MONO_DIF_PIBS          NUMBER,
+  MONO_DIF_VIBS          NUMBER,
+  MONO_DIF_PCBS          NUMBER,
+  MONO_DIF_VCBS          NUMBER,
+  -- Transferências, ZFM, Ajustes e Estornos
+  TRANSF_VIBS            NUMBER,
+  TRANSF_VCBS            NUMBER,
+  ZFM_PIBS               NUMBER,
+  ZFM_VIBS               NUMBER,
+  ZFM_PCBS               NUMBER,
+  ZFM_VCBS               NUMBER,
+  AJ_COMP_VIBS           NUMBER,
+  AJ_COMP_VCBS           NUMBER,
+  ESTORNO_VIBS           NUMBER,
+  ESTORNO_VCBS           NUMBER,
+  -- Campos calculados / complementares
+  I08_CFOP_DESC          VARCHAR2(255 BYTE),   -- preenchido pelo TRG_BIU_UNIFICADA_CFOP
+  NOME_ARQUIVO           VARCHAR2(255 BYTE),
+  -- Cabeçalho NF-e
+  B02_CUF                VARCHAR2(256 BYTE),
+  B03_CNF                VARCHAR2(256 BYTE),
+  B04_NATOP              VARCHAR2(256 BYTE),
+  B06_MOD                VARCHAR2(256 BYTE),
+  B07_SERIE              VARCHAR2(256 BYTE),
+  B10_DHSAIENT           VARCHAR2(256 BYTE),
+  B11_TPNF               VARCHAR2(256 BYTE),
+  B11A_IDDEST            VARCHAR2(256 BYTE),
+  B12_CMUNFG             VARCHAR2(256 BYTE),
+  B21_TPIMP              VARCHAR2(256 BYTE),
+  B22_TPEMIS             VARCHAR2(256 BYTE),
+  B23_CDV                VARCHAR2(256 BYTE),
+  B24_TPAMB              VARCHAR2(256 BYTE),
+  B25_FINNFE             VARCHAR2(256 BYTE),
+  B25A_INDFINAL          VARCHAR2(256 BYTE),
+  B25B_INDPRES           VARCHAR2(256 BYTE),
+  B25C_INDINTERMED       VARCHAR2(256 BYTE),
+  B26_PROCEMI            VARCHAR2(256 BYTE),
+  B27_VERPROC            VARCHAR2(256 BYTE),
+  B28_DHCONT             VARCHAR2(256 BYTE),
+  B29_XJUST              VARCHAR2(256 BYTE),
+  B_CMUNFGIBS            VARCHAR2(256 BYTE),
+  -- 001 - ajuste no campo frete
+  I16_VFRETE             VARCHAR2(50 BYTE)
+)
+TABLESPACE TBS_APEX
+PCTUSED    0
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING
+NOCOMPRESS
+INMEMORY MEMCOMPRESS FOR QUERY LOW PRIORITY NONE DISTRIBUTE AUTO FOR SERVICE DEFAULT NO DUPLICATE
+NOCACHE
+/
+
+CREATE UNIQUE INDEX PK_NFE_UNIFICADA ON TB_UNIFICADA_RF (CHAVE_ACESSO, NITEM, TIPO_DOCUMENTO)
+NOLOGGING TABLESPACE TBS_APEX PCTFREE 10 INITRANS 2 MAXTRANS 255
+STORAGE (INITIAL 64K NEXT 1M MINEXTENTS 1 MAXEXTENTS UNLIMITED PCTINCREASE 0 BUFFER_POOL DEFAULT)
+/
+
+ALTER TABLE TB_UNIFICADA_RF ADD (
+  CONSTRAINT PK_NFE_UNIFICADA PRIMARY KEY (CHAVE_ACESSO, NITEM, TIPO_DOCUMENTO)
+  USING INDEX PK_NFE_UNIFICADA ENABLE VALIDATE)
+/
+
+-- ── Trigger: preenche I08_CFOP_DESC via MSAF_DW.X2012_COD_FISCAL ─────────────
+CREATE OR REPLACE TRIGGER TRG_BIU_UNIFICADA_CFOP
+   BEFORE INSERT OR UPDATE OF I08_CFOP
+   ON TB_UNIFICADA_RF
+   FOR EACH ROW
+DECLARE
+   v_descricao VARCHAR2(255);
+BEGIN
+   IF :NEW.I08_CFOP IS NOT NULL THEN
+      BEGIN
+         SELECT DESCRICAO
+           INTO v_descricao
+           FROM MSAF_DW.X2012_COD_FISCAL
+          WHERE TO_CHAR(COD_CFO) = :NEW.I08_CFOP
+            AND ROWNUM = 1;
+
+         :NEW.I08_CFOP_DESC := :NEW.I08_CFOP || ' - ' || v_descricao;
+      EXCEPTION
+         WHEN NO_DATA_FOUND THEN
+            :NEW.I08_CFOP_DESC := :NEW.I08_CFOP || ' - CFOP NÃO CADASTRADO';
+         WHEN OTHERS THEN
+            :NEW.I08_CFOP_DESC := :NEW.I08_CFOP || ' - ERRO NA BUSCA DO CFOP';
+      END;
+   ELSE
+      :NEW.I08_CFOP_DESC := NULL;
+   END IF;
+END TRG_BIU_UNIFICADA_CFOP;
+/
+
+SHOW ERRORS;

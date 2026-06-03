@@ -1,0 +1,19 @@
+-- ============================================================
+-- Tipo    : ALTER PROCEDURE (script de alteracao)
+-- Objeto  : PRC_NFE_UNIFICAR_DADOS
+-- Schema  : USER_XMLS
+-- Arquivo : alter_001b_prc_nfe_unificar_dados_cursor.sql
+-- Descricao: Adiciona c.I16_VFRETE no CURSOR c_unificado
+--            (SELECT de TB_REFORMA_CONSOLIDADA).
+-- ------------------------------------------------------------
+-- 001 - 2026-06-03 - Adicao de c.I16_VFRETE no CURSOR SELECT
+-- ============================================================
+-- Trecho alterado no CURSOR c_unificado:
+--
+-- ANTES:
+--   c.I14_QTRIB, c.I14A_VUNTRIB, c.I15_VDESC, c.I17B_DINTOT,
+--
+-- DEPOIS:
+--   c.I14_QTRIB, c.I14A_VUNTRIB, c.I15_VDESC, c.I16_VFRETE, -- 001 - ajuste no campo frete
+--   c.I17B_DINTOT,
+-- ============================================================

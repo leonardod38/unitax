@@ -1,0 +1,4 @@
+﻿id_dados_orbita;classificacao;zona_ini;forma_dist;zona_dest;zona_plato;zona_trans;d1;d2;mag_ab;passos;vel;idx_pico;degrau;descida_tipo;plato_mag;plato_int;basico_max;mom_razao;mom_acel;ac_lag1;grad_vel;grad_cheg;perc_iqr;arco;vol_padrao;razao_tend;parada_final
+12602918;C4a-winner;Z4;MESOCURTICA;Z4;Z5;Z5->Z4;135,6;-28,43;-5157;14;NORMAL;1;5;QUEDA_IRREGULAR;-5157;EXTREMA;9664;0,3058;S;0,0949;264,5;DESCENDO;N;36056;CRESCENTE;CRESCENTE;2700;
+12599645;C2-winner-sem-C4a;Z1;PLATICURTICA;Z0;Z0;Z0->Z0;187,12;235,8;-8521;12;NORMAL;4;9;QUEDA_IRREGULAR;-8521;EXTREMA;9053;0,1901;S;-0,0475;-1012,75;DESCENDO;S;57692;IRREGULAR;DECRESCENTE;1400;
+12663701;C2-winner-sem-C4a;Z2;PLATICURTICA;Z2;Z2;Z2->Z2;316,57;245,23;-4193;11;NORMAL;3;7;QUEDA_IRREGULAR;-4193;EXTREMA;8065;0,2146;S;0,0135;200;HORIZONTAL;N;41318;IRREGULAR;CRESCENTE;700

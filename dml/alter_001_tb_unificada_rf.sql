@@ -1,0 +1,3 @@
+-- ARQUIVO CRIADO POR ENGANO — NAO EXECUTAR
+-- A alteracao 001 neste contexto afeta apenas a VW_UNIFICADA_RF.
+-- TB_UNIFICADA_RF nao foi alterada.

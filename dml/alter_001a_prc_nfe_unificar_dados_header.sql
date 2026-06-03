@@ -1,0 +1,12 @@
+-- ============================================================
+-- Tipo    : ALTER PROCEDURE (script de alteracao)
+-- Objeto  : PRC_NFE_UNIFICAR_DADOS
+-- Schema  : USER_XMLS
+-- Arquivo : alter_001a_prc_nfe_unificar_dados_header.sql
+-- Descricao: Adiciona cabecalho profissional à procedure.
+--            Nao altera logica — apenas documentacao.
+-- ------------------------------------------------------------
+-- 001 - 2026-06-03 - Adicao de cabecalho profissional
+-- ============================================================
+-- Aplicar antes dos demais scripts 001b, 001c, 001d.
+-- ============================================================

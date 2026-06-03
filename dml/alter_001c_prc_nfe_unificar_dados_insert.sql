@@ -1,0 +1,19 @@
+-- ============================================================
+-- Tipo    : ALTER PROCEDURE (script de alteracao)
+-- Objeto  : PRC_NFE_UNIFICAR_DADOS
+-- Schema  : USER_XMLS
+-- Arquivo : alter_001c_prc_nfe_unificar_dados_insert.sql
+-- Descricao: Adiciona I16_VFRETE na lista de colunas do
+--            INSERT INTO TB_UNIFICADA_RF.
+-- ------------------------------------------------------------
+-- 001 - 2026-06-03 - Adicao de I16_VFRETE no INSERT colunas
+-- ============================================================
+-- Trecho alterado no INSERT INTO TB_UNIFICADA_RF (...):
+--
+-- ANTES:
+--   I14_QTRIB, I14A_VUNTRIB, I15_VDESC, I17B_INDTOT,
+--
+-- DEPOIS:
+--   I14_QTRIB, I14A_VUNTRIB, I15_VDESC, I16_VFRETE, -- 001 - ajuste no campo frete
+--   I17B_INDTOT,
+-- ============================================================

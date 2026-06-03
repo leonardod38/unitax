@@ -1,0 +1,21 @@
+-- ============================================================
+-- Tipo    : ALTER PROCEDURE (script de alteracao)
+-- Objeto  : PRC_NFE_UNIFICAR_DADOS
+-- Schema  : USER_XMLS
+-- Arquivo : alter_001d_prc_nfe_unificar_dados_values.sql
+-- Descricao: Adiciona v_array(i).I16_VFRETE na clausula
+--            VALUES do INSERT INTO TB_UNIFICADA_RF.
+-- ------------------------------------------------------------
+-- 001 - 2026-06-03 - Adicao de v_array(i).I16_VFRETE no VALUES
+-- ============================================================
+-- Trecho alterado no VALUES (...):
+--
+-- ANTES:
+--   v_array(i).I14_QTRIB, v_array(i).I14A_VUNTRIB,
+--   v_array(i).I15_VDESC, v_array(i).I17B_INDTOT,
+--
+-- DEPOIS:
+--   v_array(i).I14_QTRIB, v_array(i).I14A_VUNTRIB,
+--   v_array(i).I15_VDESC, v_array(i).I16_VFRETE, -- 001 - ajuste no campo frete
+--   v_array(i).I17B_INDTOT,
+-- ============================================================

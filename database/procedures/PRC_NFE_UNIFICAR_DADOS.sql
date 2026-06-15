@@ -1,3 +1,15 @@
+-- =============================================================================
+-- Procedure..: USER_XMLS.PRC_NFE_UNIFICAR_DADOS
+-- Resumo.....: Unifica TB_REFORMA_CONSOLIDADA (c) com TB_REFORMA_TRIBUTARIA (t)
+--              via LEFT JOIN (CHAVE_ACESSO + NITEM + TIPO_DOCUMENTO) e grava em
+--              TB_UNIFICADA_RF (TRUNCATE + BULK COLLECT + FORALL SAVE EXCEPTIONS,
+--              log em TB_LOG_NFE_REFORMA).
+--
+-- Historico:
+--   v1.1.0 - 2026-06-15 - Propaga Z03_INFCPL e ZX02_QRCODE da consolidada para
+--                         a TB_UNIFICADA_RF (cursor, INSERT e VALUES).
+--   v1.0.0 - 2026-05-19 - Versao inicial.
+-- =============================================================================
 CREATE OR REPLACE PROCEDURE USER_XMLS.PRC_NFE_UNIFICAR_DADOS AS
     CURSOR c_unificado IS
         SELECT /*+ PARALLEL(8) */
@@ -7,6 +19,9 @@ CREATE OR REPLACE PROCEDURE USER_XMLS.PRC_NFE_UNIFICAR_DADOS AS
 
             c.C02_CNPJ, c.C02A_CPF, c.C03_XNOME, c.C04_XFANT, c.C05_XLGR, c.C05_NRO, c.C05_XCPL, c.C05_XBAIRRO, c.C05_CMUN, c.C05_XMUN, c.C05_UF, c.C05_CEP, c.C05_CPAIS, c.C05_XPAIS, c.C05_FONE, c.C17_IE, c.C18_IEST, c.C19_IM, c.C20_CNAE, c.C21_CRT,
             c.E02_CNPJ, c.E03_CPF, c.E03A_IDESTRANGEIRO, c.E04_XNOME, c.E05_XLGR, c.E05_NRO, c.E05_XCPL, c.E05_XBAIRRO, c.E05_CMUN, c.E05_XMUN, c.E05_UF, c.E05_CEP, c.E05_CPAIS, c.E05_XPAIS, c.E05_FONE, c.E16_INDIEDEST, c.E17_IE, c.E18_ISUF, c.E19_IM, c.E20_EMAIL,
+
+            -- Informacoes Adicionais (Z) e Suplementares (ZX) - vindas da consolidada
+            c.Z03_INFCPL, c.ZX02_QRCODE,
 
             c.I02_CPROD, c.I03_CEAN, c.I04_XPROD, c.I05_NCM, c.I08_CFOP, c.I09_UCOM, c.I10_QCOM, c.I10A_VUNCOM, c.I11_VPROD, c.I12_CEANTRIB, c.I13_UTRIB, c.I14_QTRIB, c.I14A_VUNTRIB, c.I15_VDESC, c.I17B_INDTOT,
             c.ICMS_ORIG, c.ICMS_CST, c.ICMS_CSOSN, c.ICMS_VBC, c.ICMS_PICMS, c.ICMS_VICMS, c.ICMS_VBCST, c.ICMS_PICMSST, c.ICMS_VICMSST,
@@ -65,6 +80,9 @@ BEGIN
                     C02_CNPJ, C02A_CPF, C03_XNOME, C04_XFANT, C05_XLGR, C05_NRO, C05_XCPL, C05_XBAIRRO, C05_CMUN, C05_XMUN, C05_UF, C05_CEP, C05_CPAIS, C05_XPAIS, C05_FONE, C17_IE, C18_IEST, C19_IM, C20_CNAE, C21_CRT,
                     E02_CNPJ, E03_CPF, E03A_IDESTRANGEIRO, E04_XNOME, E05_XLGR, E05_NRO, E05_XCPL, E05_XBAIRRO, E05_CMUN, E05_XMUN, E05_UF, E05_CEP, E05_CPAIS, E05_XPAIS, E05_FONE, E16_INDIEDEST, E17_IE, E18_ISUF, E19_IM, E20_EMAIL,
 
+                    -- Informacoes Adicionais (Z) e Suplementares (ZX)
+                    Z03_INFCPL, ZX02_QRCODE,
+
                     I02_CPROD, I03_CEAN, I04_XPROD, I05_NCM, I08_CFOP, I09_UCOM, I10_QCOM, I10A_VUNCOM, I11_VPROD, I12_CEANTRIB, I13_UTRIB, I14_QTRIB, I14A_VUNTRIB, I15_VDESC, I17B_INDTOT,
                     ICMS_ORIG, ICMS_CST, ICMS_CSOSN, ICMS_VBC, ICMS_PICMS, ICMS_VICMS, ICMS_VBCST, ICMS_PICMSST, ICMS_VICMSST,
                     IPI_CENQ, IPI_CNPJPROD, IPI_CST, IPI_VBC, IPI_PIPI, IPI_QUNID, IPI_VUNID, IPI_VIPI,
@@ -90,6 +108,9 @@ BEGIN
 
                     v_array(i).C02_CNPJ, v_array(i).C02A_CPF, v_array(i).C03_XNOME, v_array(i).C04_XFANT, v_array(i).C05_XLGR, v_array(i).C05_NRO, v_array(i).C05_XCPL, v_array(i).C05_XBAIRRO, v_array(i).C05_CMUN, v_array(i).C05_XMUN, v_array(i).C05_UF, v_array(i).C05_CEP, v_array(i).C05_CPAIS, v_array(i).C05_XPAIS, v_array(i).C05_FONE, v_array(i).C17_IE, v_array(i).C18_IEST, v_array(i).C19_IM, v_array(i).C20_CNAE, v_array(i).C21_CRT,
                     v_array(i).E02_CNPJ, v_array(i).E03_CPF, v_array(i).E03A_IDESTRANGEIRO, v_array(i).E04_XNOME, v_array(i).E05_XLGR, v_array(i).E05_NRO, v_array(i).E05_XCPL, v_array(i).E05_XBAIRRO, v_array(i).E05_CMUN, v_array(i).E05_XMUN, v_array(i).E05_UF, v_array(i).E05_CEP, v_array(i).E05_CPAIS, v_array(i).E05_XPAIS, v_array(i).E05_FONE, v_array(i).E16_INDIEDEST, v_array(i).E17_IE, v_array(i).E18_ISUF, v_array(i).E19_IM, v_array(i).E20_EMAIL,
+
+                    -- Informacoes Adicionais (Z) e Suplementares (ZX)
+                    v_array(i).Z03_INFCPL, v_array(i).ZX02_QRCODE,
 
                     v_array(i).I02_CPROD, v_array(i).I03_CEAN, v_array(i).I04_XPROD, v_array(i).I05_NCM, v_array(i).I08_CFOP, v_array(i).I09_UCOM, v_array(i).I10_QCOM, v_array(i).I10A_VUNCOM, v_array(i).I11_VPROD, v_array(i).I12_CEANTRIB, v_array(i).I13_UTRIB, v_array(i).I14_QTRIB, v_array(i).I14A_VUNTRIB, v_array(i).I15_VDESC, v_array(i).I17B_INDTOT,
                     v_array(i).ICMS_ORIG, v_array(i).ICMS_CST, v_array(i).ICMS_CSOSN, v_array(i).ICMS_VBC, v_array(i).ICMS_PICMS, v_array(i).ICMS_VICMS, v_array(i).ICMS_VBCST, v_array(i).ICMS_PICMSST, v_array(i).ICMS_VICMSST,

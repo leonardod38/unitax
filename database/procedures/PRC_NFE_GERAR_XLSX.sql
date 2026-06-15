@@ -3,9 +3,10 @@ CREATE OR REPLACE PROCEDURE USER_XMLS.PRC_NFE_GERAR_XLSX AS
 -- Tipo   : PROCEDURE
 -- Objeto : PRC_NFE_GERAR_XLSX
 -- Schema : USER_XMLS
--- Salvo  : 2026-05-14
+-- Salvo  : 2026-06-15
 -- Origem : Refatorado via revisão de código
 -- ------------------------------------------------------------
+-- v1.5.0 - 2026-06-15 - Problema 1: c_total_colunas 143->145 e faixa de cor ate 145 (view +INFO_COMPLEMENTAR/QR_CODE)
 -- v1.4.0 - 2026-05-14 - Condicional CSV (>= 700k registros) via UTL_FILE; XLSX mantido abaixo do limite
 -- v1.3.0 - 2026-05-14 - Formatação profissional: Calibri, bordas, alinhamento, wrapText, altura de linha
 -- v1.2.0 - 2026-05-13 - Corrigido list_validation: loop baseado na spec real do AS_XLSX
@@ -16,7 +17,7 @@ CREATE OR REPLACE PROCEDURE USER_XMLS.PRC_NFE_GERAR_XLSX AS
    -- Constantes de estrutura
    -- INVARIANTE: c_total_colunas deve refletir exatamente o número de colunas de VW_UNIFICADA_RF.
    -- Se a view mudar, atualizar este valor e revisar os intervalos de cor no passo 5.
-   c_total_colunas   CONSTANT PLS_INTEGER := 143;
+   c_total_colunas   CONSTANT PLS_INTEGER := 145;
    c_col_auditoria   CONSTANT PLS_INTEGER := c_total_colunas + 1;
    -- AS_XLSX.list_validation (spec v2020) aceita apenas sqref de célula única.
    c_max_valid_rows  CONSTANT PLS_INTEGER := 10000;
@@ -316,7 +317,7 @@ BEGIN
             WHEN rec.column_id BETWEEN 1  AND 7   THEN v_fundo_atual := v_fill_verm_claro;  v_fonte_atual := v_font_cabec_preta;
             WHEN rec.column_id BETWEEN 8  AND 21  THEN v_fundo_atual := v_fill_verde_esm;   v_fonte_atual := v_font_cabec_preta;
             WHEN rec.column_id BETWEEN 22 AND 37  THEN v_fundo_atual := v_fill_amar_claro;  v_fonte_atual := v_font_cabec_preta;
-            WHEN rec.column_id BETWEEN 38 AND 143 THEN v_fundo_atual := v_fill_cinza_claro; v_fonte_atual := v_font_cabec_preta;
+            WHEN rec.column_id BETWEEN 38 AND 145 THEN v_fundo_atual := v_fill_cinza_claro; v_fonte_atual := v_font_cabec_preta;
             ELSE                                        v_fundo_atual := v_fill_padrao;       v_fonte_atual := v_font_cabec_branca;
          END CASE;
 

@@ -6,6 +6,7 @@ CREATE OR REPLACE PROCEDURE USER_XMLS.PRC_NFE_GERAR_XLSX AS
 -- Salvo  : 2026-06-15
 -- Origem : Refatorado via revisão de código
 -- ------------------------------------------------------------
+-- v1.6.0 - 2026-06-15 - Problema 2 (CSV): +INFO_COMPLEMENTAR/QR_CODE (PUT separado, sanitizado) e correcao I15_VDESC->I16_VFRETE
 -- v1.5.0 - 2026-06-15 - Problema 1: c_total_colunas 143->145 e faixa de cor ate 145 (view +INFO_COMPLEMENTAR/QR_CODE)
 -- v1.4.0 - 2026-05-14 - Condicional CSV (>= 700k registros) via UTL_FILE; XLSX mantido abaixo do limite
 -- v1.3.0 - 2026-05-14 - Formatação profissional: Calibri, bordas, alinhamento, wrapText, altura de linha
@@ -89,7 +90,7 @@ BEGIN
          'DEST_CNPJ;DEST_CPF;DEST_NOME;DEST_LOGRADOURO;DEST_NRO;DEST_COMPLEMENTO;' ||
          'DEST_BAIRRO;DEST_MUN;DEST_UF;DEST_CEP;DEST_PAIS;DEST_IE;DEST_IM;' ||
          'COD_PROD;COD_EAN;DESC_PROD;I05_NCM;I08_CFOP;I08_CFOP_DESC;I09_UCOM;' ||
-         'I10_QCOM;I10A_VUNCOM;I11_VPROD;I14_QTRIB;I14A_VUNTRIB;I15_VDESC;'
+         'I10_QCOM;I10A_VUNCOM;I11_VPROD;I14_QTRIB;I14A_VUNTRIB;I16_VFRETE;'
       );
       UTL_FILE.PUT(v_handle,
          'ICMS_ORIG;ICMS_CST;ICMS_CSOSN;ICMS_VBC;ICMS_PICMS;ICMS_VICMS;' ||
@@ -114,7 +115,7 @@ BEGIN
          'MONO_ANT_VBC;MONO_ANT_QBCMONO;MONO_ANT_ADREMIBS;MONO_ANT_ADREMCBS;MONO_ANT_VIBS;MONO_ANT_VCBS;' ||
          'MONO_DIF_PIBS;MONO_DIF_VIBS;MONO_DIF_PCBS;MONO_DIF_VCBS;' ||
          'TRANSF_VIBS;TRANSF_VCBS;ZFM_PIBS;ZFM_VIBS;ZFM_PCBS;ZFM_VCBS;' ||
-         'AJ_COMP_VIBS;AJ_COMP_VCBS;ESTORNO_VIBS;ESTORNO_VCBS'
+         'AJ_COMP_VIBS;AJ_COMP_VCBS;ESTORNO_VIBS;ESTORNO_VCBS;INFO_COMPLEMENTAR;QR_CODE'
       );
       UTL_FILE.NEW_LINE(v_handle);
 
@@ -137,7 +138,7 @@ BEGIN
             DESC_PROD, I05_NCM, I08_CFOP,
             I08_CFOP_DESC, I09_UCOM, I10_QCOM,
             I10A_VUNCOM, I11_VPROD, I14_QTRIB,
-            I14A_VUNTRIB, I15_VDESC, ICMS_ORIG,
+            I14A_VUNTRIB, I16_VFRETE, ICMS_ORIG,
             ICMS_CST, ICMS_CSOSN, ICMS_VBC,
             ICMS_PICMS, ICMS_VICMS, ICMS_VBCST,
             ICMS_PICMSST, ICMS_VICMSST, IPI_CENQ,
@@ -169,7 +170,8 @@ BEGIN
             MONO_DIF_VCBS, TRANSF_VIBS, TRANSF_VCBS,
             ZFM_PIBS, ZFM_VIBS, ZFM_PCBS,
             ZFM_VCBS, AJ_COMP_VIBS, AJ_COMP_VCBS,
-            ESTORNO_VIBS, ESTORNO_VCBS
+            ESTORNO_VIBS, ESTORNO_VCBS,
+            INFO_COMPLEMENTAR, QR_CODE
          FROM VW_UNIFICADA_RF
       ) LOOP
 
@@ -200,7 +202,7 @@ BEGIN
             NVL(TO_CHAR(rec.I08_CFOP_DESC),    '') || ';' || NVL(TO_CHAR(rec.I09_UCOM),          '') || ';' ||
             NVL(TO_CHAR(rec.I10_QCOM),         '') || ';' || NVL(TO_CHAR(rec.I10A_VUNCOM),       '') || ';' ||
             NVL(TO_CHAR(rec.I11_VPROD),        '') || ';' || NVL(TO_CHAR(rec.I14_QTRIB),         '') || ';' ||
-            NVL(TO_CHAR(rec.I14A_VUNTRIB),     '') || ';' || NVL(TO_CHAR(rec.I15_VDESC),         '') || ';'
+            NVL(TO_CHAR(rec.I14A_VUNTRIB),     '') || ';' || NVL(TO_CHAR(rec.I16_VFRETE),        '') || ';'
          );
 
          UTL_FILE.PUT(v_handle,
@@ -257,7 +259,14 @@ BEGIN
             NVL(TO_CHAR(rec.ZFM_PIBS),               '') || ';' || NVL(TO_CHAR(rec.ZFM_VIBS),               '') || ';' ||
             NVL(TO_CHAR(rec.ZFM_PCBS),               '') || ';' || NVL(TO_CHAR(rec.ZFM_VCBS),               '') || ';' ||
             NVL(TO_CHAR(rec.AJ_COMP_VIBS),           '') || ';' || NVL(TO_CHAR(rec.AJ_COMP_VCBS),           '') || ';' ||
-            NVL(TO_CHAR(rec.ESTORNO_VIBS),           '') || ';' || NVL(TO_CHAR(rec.ESTORNO_VCBS),           '')
+            NVL(TO_CHAR(rec.ESTORNO_VIBS),           '') || ';' || NVL(TO_CHAR(rec.ESTORNO_VCBS),           '') || ';'
+         );
+
+         -- INFO_COMPLEMENTAR pode ser longo (ate 4000) e conter ';'/quebras de linha (infCpl):
+         -- PUT separado (limite 32767/chamada do UTL_FILE) e sanitizado para nao corromper o CSV.
+         UTL_FILE.PUT(v_handle,
+            REPLACE(REPLACE(REPLACE(NVL(rec.INFO_COMPLEMENTAR, ''), ';', ','), CHR(13), ' '), CHR(10), ' ') || ';' ||
+            NVL(TO_CHAR(rec.QR_CODE),                '')
          );
          UTL_FILE.NEW_LINE(v_handle);
 

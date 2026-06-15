@@ -6,6 +6,8 @@
 --              log em TB_LOG_NFE_REFORMA).
 --
 -- Historico:
+--   v1.2.0 - 2026-06-15 - Removido o TRUNCATE da TB_UNIFICADA_RF (limpeza passa
+--                         a ser externa). Ver comentario no corpo (BEGIN).
 --   v1.1.0 - 2026-06-15 - Propaga Z03_INFCPL e ZX02_QRCODE da consolidada para
 --                         a TB_UNIFICADA_RF (cursor, INSERT e VALUES).
 --   v1.0.0 - 2026-05-19 - Versao inicial.
@@ -63,7 +65,11 @@ CREATE OR REPLACE PROCEDURE USER_XMLS.PRC_NFE_UNIFICAR_DADOS AS
     END gravar_log;
 
 BEGIN
-    EXECUTE IMMEDIATE 'TRUNCATE TABLE TB_UNIFICADA_RF';
+    -- TRUNCATE removido (v1.2.0): a procedure NAO limpa mais a TB_UNIFICADA_RF.
+    -- A limpeza/controle de carga da tabela passa a ser responsabilidade externa
+    -- (orquestrador / job). Atencao: sem essa limpeza, execucoes repetidas
+    -- acumulam/duplicam linhas na TB_UNIFICADA_RF.
+    -- EXECUTE IMMEDIATE 'TRUNCATE TABLE TB_UNIFICADA_RF';
 
     OPEN c_unificado;
     LOOP

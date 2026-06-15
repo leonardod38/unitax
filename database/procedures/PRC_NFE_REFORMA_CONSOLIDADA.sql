@@ -45,6 +45,9 @@ CREATE OR REPLACE PROCEDURE USER_XMLS.PRC_NFE_REFORMA_CONSOLIDADA AS
            capa.E05_XMUN, capa.E05_UF, capa.E05_CEP, capa.E05_CPAIS, capa.E05_XPAIS, capa.E05_FONE,
            capa.E16_INDIEDEST, capa.E17_IE, capa.E18_ISUF, capa.E19_IM, capa.E20_EMAIL,
 
+           -- Informacoes Adicionais (Z) e Suplementares (ZX) - nivel capa
+           capa.Z03_INFCPL, capa.ZX02_QRCODE,
+
            -- 3. Produtos
            det.I02_CPROD, det.I03_CEAN, det.I04_XPROD, det.I05_NCM, det.I08_CFOP, det.I09_UCOM,
            ROUND(TO_NUMBER(det.I10_QCOM_STR, '99999999999990.9999999999', 'NLS_NUMERIC_CHARACTERS = ''. '''), 2) AS I10_QCOM,
@@ -179,6 +182,12 @@ CREATE OR REPLACE PROCEDURE USER_XMLS.PRC_NFE_REFORMA_CONSOLIDADA AS
                      E19_IM           VARCHAR2(15) PATH 'NFe/infNFe/dest/IM',
                      E20_EMAIL        VARCHAR2(60) PATH 'NFe/infNFe/dest/email',
 
+                     -- Grupo Z - Informacoes Adicionais
+                     Z03_INFCPL       VARCHAR2(4000) PATH 'NFe/infNFe/infAdic/infCpl',
+
+                     -- Grupo ZX - Informacoes Suplementares (QR Code - somente NFC-e mod 65)
+                     ZX02_QRCODE      VARCHAR2(1000) PATH 'NFe/infNFeSupl/qrCode',
+
                      -- Passando no inteiro de itens para o Filho
                      XML_ITENS        XMLTYPE      PATH 'NFe/infNFe/det'
              ) capa,
@@ -292,6 +301,8 @@ BEGIN
                     E02_CNPJ, E03_CPF, E03A_IDESTRANGEIRO, E04_XNOME, E05_XLGR, E05_NRO, E05_XCPL, E05_XBAIRRO, E05_CMUN, E05_XMUN, E05_UF, E05_CEP, E05_CPAIS, E05_XPAIS, E05_FONE,
                     E16_INDIEDEST, E17_IE, E18_ISUF, E19_IM, E20_EMAIL,
 
+                    Z03_INFCPL, ZX02_QRCODE,
+
                     I02_CPROD, I03_CEAN, I04_XPROD, I05_NCM, I08_CFOP, I09_UCOM, I10_QCOM, I10A_VUNCOM, I11_VPROD, I12_CEANTRIB, I13_UTRIB, I14_QTRIB, I14A_VUNTRIB, I15_VDESC, I17B_INDTOT,
 
                     ICMS_ORIG, ICMS_CST, ICMS_CSOSN, ICMS_VBC, ICMS_PICMS, ICMS_VICMS, ICMS_VBCST, ICMS_PICMSST, ICMS_VICMSST,
@@ -313,6 +324,8 @@ BEGIN
 
                     v_doc_array(i).E02_CNPJ, v_doc_array(i).E03_CPF, v_doc_array(i).E03A_IDESTRANGEIRO, v_doc_array(i).E04_XNOME, v_doc_array(i).E05_XLGR, v_doc_array(i).E05_NRO, v_doc_array(i).E05_XCPL, v_doc_array(i).E05_XBAIRRO, v_doc_array(i).E05_CMUN, v_doc_array(i).E05_XMUN, v_doc_array(i).E05_UF, v_doc_array(i).E05_CEP, v_doc_array(i).E05_CPAIS, v_doc_array(i).E05_XPAIS, v_doc_array(i).E05_FONE,
                     v_doc_array(i).E16_INDIEDEST, v_doc_array(i).E17_IE, v_doc_array(i).E18_ISUF, v_doc_array(i).E19_IM, v_doc_array(i).E20_EMAIL,
+
+                    v_doc_array(i).Z03_INFCPL, v_doc_array(i).ZX02_QRCODE,
 
                     v_doc_array(i).I02_CPROD, v_doc_array(i).I03_CEAN, v_doc_array(i).I04_XPROD, v_doc_array(i).I05_NCM, v_doc_array(i).I08_CFOP, v_doc_array(i).I09_UCOM, v_doc_array(i).I10_QCOM, v_doc_array(i).I10A_VUNCOM, v_doc_array(i).I11_VPROD, v_doc_array(i).I12_CEANTRIB, v_doc_array(i).I13_UTRIB, v_doc_array(i).I14_QTRIB, v_doc_array(i).I14A_VUNTRIB, v_doc_array(i).I15_VDESC, v_doc_array(i).I17B_INDTOT,
 

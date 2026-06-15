@@ -1,12 +1,14 @@
 -- =============================================================================
 -- Procedure..: USER_XMLS.PRC_NFE_REFORMA_CONSOLIDADA
--- Resumo.....: Orquestrador da consolidacao de NF-e/NFC-e. Le os XMLs da
---              stg_nfe, extrai os campos via XMLTABLE (capa + itens), grava em
---              massa na TB_REFORMA_CONSOLIDADA (BULK COLLECT + FORALL SAVE
---              EXCEPTIONS, log em TB_LOG_NFE_REFORMA) e ao final dispara
---              PRC_LOTE_NFE_REFORMA_CONSOLIDADA e PRC_CFE_REFORMA_CONSOLIDADA.
+-- Resumo.....: Consolida NF-e/NFC-e. Le os XMLs da stg_nfe, extrai os campos
+--              via XMLTABLE (capa + itens) e grava em massa na
+--              TB_REFORMA_CONSOLIDADA (BULK COLLECT + FORALL SAVE EXCEPTIONS,
+--              log em TB_LOG_NFE_REFORMA).
 --
 -- Historico:
+--   v1.2.0 - 2026-06-15 - Removido o encadeamento de PRC_LOTE_NFE_REFORMA_
+--                         CONSOLIDADA e PRC_CFE_REFORMA_CONSOLIDADA (orquestracao
+--                         passa a ser externa).
 --   v1.1.0 - 2026-06-15 - Adicionados os campos Z03_INFCPL (infAdic/infCpl) e
 --                         ZX02_QRCODE (infNFeSupl/qrCode): extracao no XMLTABLE
 --                         da capa e gravacao no INSERT da TB_REFORMA_CONSOLIDADA.
@@ -363,11 +365,9 @@ BEGIN
     END LOOP;
     CLOSE c_docs;
 
-BEGIN
-    PRC_LOTE_NFE_REFORMA_CONSOLIDADA;
-    PRC_CFE_REFORMA_CONSOLIDADA;
-END;
-
+    -- Encadeamento removido (v1.2.0): PRC_LOTE_NFE_REFORMA_CONSOLIDADA e
+    -- PRC_CFE_REFORMA_CONSOLIDADA nao sao mais chamadas aqui; a orquestracao
+    -- passa a ser responsabilidade externa (orquestrador / job).
 END PRC_NFE_REFORMA_CONSOLIDADA;
 /
 
